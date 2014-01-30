@@ -6,6 +6,11 @@
 4. create model User with required login functions.login(),in_group(),pwd_has_changed()
 
 
+##Dependecies :
+
+models/user.php : an example is provided
+helpers/MY_html_helper.php : depend on alerts() function and some javascript for proper alerts showing.
+
 ##usage
 
 first you need to edit $body to point to your base template; default location is `views/base/body.php`
@@ -34,7 +39,26 @@ first you need to edit $body to point to your base template; default location is
     
     <?=@$js?>
     
-    <?=@$inline_js?>
+    <script>
+			/*-----------example using jquery alertify plugin of how i use function alerts()-----------*/
+			function alertFeed(){
+				$.get("<?=base_url($this->router->fetch_class())?>/alerts", function(data){
+					data=JSON.parse(data);
+					$.each(data, function(i) {alertify.log(data[i].msg, data[i].type);});
+				});	
+			}
+			
+			setInterval(function(){alertFeed()},30000);
+			/*-----------END alertify-----------*/
+			
+			$(function (){
+				alertify.set({ delay: 10000 });
+				alertFeed();
+			});
+			
+			/* please note that inline_js need to be inside <script> tags */
+			<?=@$inline_js?>
+		</script>
     
     </body>
 </html>
@@ -82,13 +106,14 @@ class Welcome extends MY_Controller {
 
 
 
-###Avaliable options ::
-this was to answer a stackoverflow question :p !; yet i use this concept in real projects and its working good for me;
+###Avaliable auth ::
+
 
 ;CI rocks;
 
 
 ##NOTE
+this is still a concept under testing.
 
 this is just a demonstration of how u can forget about the need for a templating lib. that will slow you down.
 
