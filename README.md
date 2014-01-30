@@ -6,10 +6,10 @@
 4. create model User with required login functions.login(),in_group(),pwd_has_changed()
 
 
-##Dependecies :
+###Dependecies :
 
-models/user.php : an example is provided
-helpers/MY_html_helper.php : depend on alerts() function and some javascript for proper alerts showing.
+1. models/user.php : an example is provided
+2. helpers/MY_html_helper.php : depend on alerts() function and some javascript for proper alerts showing.
 
 ##usage
 
