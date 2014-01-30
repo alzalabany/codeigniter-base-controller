@@ -10,17 +10,14 @@ class MY_Controller extends CI_Controller
 {
 
 #Sections inside your base template.
-protected	$body='base/body',
-			$title='Codeigniter Z master',//txt
-			$js=array(),//filename
-			$inline_js='',//script
-			$css=array(),
-			$inline_css='',//style
-			$breadcrumb=FALSE,//<li><a>
-			$content=array(),//html
-			$noEcho = FALSE,
-			$onlogout='auth',	#NOT USED
-			$onSuccess=null;	#NOT USED
+    protected	$body='base/body',
+                $title='Codeigniter Z master',//if you want o avoid conflict; make these a private variables
+		$js=array(),//$js
+		$inline_js='',//$inline_js
+		$css=array(),//$css
+		$inline_css='',//$inline_css
+		$content=array(),//$$SECTION
+		$noEcho = FALSE;
 
 public function __construct()
 {
@@ -62,16 +59,6 @@ function _asset($link,$txt=FALSE){
 	}
 	return $this;
 }
-function _bread($li,$html=FALSE){
-	//hide breadcrumb
-	if( $li == FALSE ){$this->breadcrumb=FALSE;return $this;}
-	
-	if($html){$this->breadcrumb[]=$li;}else{ 
-		if( is_array($li) )foreach($li as $l)$this->breadcrumb[]='<li>'.$l.'</li>'; else $this->breadcrumb[]='<li>'.$li.'</li>';
-	}
-		
-	return $this;
-}
 ##END TEMPLATE SETTERS
 
 #flush output
@@ -87,15 +74,14 @@ function _flush($protocol='html'){
 	$data['inline_css']	=($this->inline_css)	? '<style>'.implode("\n",$this->inline_css).'</style>'	:	'';
 	$data['inline_js']	=($this->inline_js)	? implode("\n",$this->inline_js)	:	'';
 	
-	$data['breadcrumb']	=is_array($this->breadcrumb)?implode("\n",$this->breadcrumb)."\n"	:	$this->breadcrumb;
-	
+
 	foreach($this->content as $section=>$content){
 		$data[$section]	= is_array($content) ? implode("\n\n\n ",$content)	:	$content;
 	}
 	
 	if($this->noEcho)ob_clean();
 	
-	if($this->body){
+	if($this->body){//setting body to false helps debug view problems !
 		$this->load->view($this->body,$data);
 	}else{
 		#debuging data sent to view
