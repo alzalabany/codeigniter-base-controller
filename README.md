@@ -14,7 +14,7 @@ first you need to edit $body to point to your base template; default location is
 ```
 <html>
     <head>
-        <title><?=@$page_title?></title>
+        <title><?=@$title?></title>
         <?=@$css?>
         
         <?=@$inline_css;?>
@@ -65,3 +65,15 @@ class Welcome extends MY_Controller {
 
 }
 ```
+
+
+
+###Avaliable options ::
+
+
+
+##NOTE
+
+this is just a demonstration of how u can forget about the need for a templating lib. that will slow you down.
+
+read the code.. understand the concept and ty :).
