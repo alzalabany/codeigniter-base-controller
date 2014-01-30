@@ -1,0 +1,125 @@
+<?php
+//------ALERTS--------#
+function alertnredirect( $txt, $uri, $type = FALSE ) {
+    $CI =& get_instance();
+    if ( $type )
+        alerts( $type, $txt );
+    else
+        alerts( 'error', $txt );
+    
+    if ( $CI->input->is_ajax_request() )
+        die( '<script>alertFeed();</script>' );
+    else
+        die( redirect( $uri ) );
+}
+function alerts( $type = FALSE, $msg = FALSE, $return = NULL ) {
+    echo '1<br/>';
+    $CI =& get_instance();
+    $sess = $CI->session->userdata( 'alertify' );
+    if ( !$sess )
+        $sess = array();
+    
+    if ( !$type && !$msg ) { //flush
+        $CI->session->unset_userdata( 'alertify' );
+        return $sess;
+    } //!$type && !$msg
+    
+    $sess[] = array(
+         'type' => $type,
+        'msg' => $msg 
+    );
+    
+    $CI->session->set_userdata( 'alertify', $sess );
+    
+    return $return;
+}
+
+
+
+//####ARRAY HELPER
+function objectize( $array ) {
+    $temp = new stdclass;
+    foreach ( $array as $k => $a ) {
+        if ( is_array( $a ) ) {
+            $temp->$k = (object) $a;
+        } //is_array( $a )
+    } //$array as $k => $a
+    return $temp;
+}
+function array_depth( $ar, $x = 0 ) {
+    $ar = array_pop( $ar );
+    while ( is_array( $ar ) )
+        return arr_depth( $ar, $x + 1 );
+    return $x;
+}
+
+
+//to filter objects like [role,doctor] will return objects with role=doctors only
+function obj_where( $array, $where ) {
+    $ret = array();
+    if ( is_object( $array ) ) {
+        foreach ( $array as $ar )
+            if ( isset( $ar->$where[ 0 ] ) && $ar->$where[ 0 ] == $where[ 1 ] )
+                $ret[] = $ar;
+    } //is_object( $array )
+    elseif ( is_array( $array ) ) {
+        foreach ( $array as $ar )
+            if ( isset( $ar[ $where[ 0 ] ] ) && $ar[ $where[ 0 ] ] == $where[ 1 ] )
+                $ret[] = $ar;
+    } //is_array( $array )
+    else {
+        $ret = FALSE;
+    }
+    return $ret;
+}
+function obj_keyChange( $array, $k ) {
+    $ret = array();
+    
+    if ( is_object( $array ) ) {
+        foreach ( $array as $ar )
+            if ( isset( $ar->$k ) )
+                $ret[ $ar->$k ][] = $ar;
+    } //is_object( $array )
+    elseif ( is_array( $array ) ) {
+        foreach ( $array as $ar )
+            if ( isset( $ar[ $k ] ) )
+                $ret[ $ar[ $k ] ][] = $ar;
+    } //is_array( $array )
+    
+    if ( count( $ret ) == 1 )
+        $ret = $ret[ 0 ];
+    else if ( empty( $ret ) )
+        $ret = FALSE;
+    
+    return $ret;
+}
+
+
+
+function calculate_age( $birthday ) {
+    if ( $birthday == "0000-00-00" ) {
+        return "undefined";
+    } //$birthday == "0000-00-00"
+    $today = new DateTime();
+    $diff  = $today->diff( new DateTime( $birthday ) );
+    
+    if ( $diff->y ) {
+        return "{$diff->y},{$diff->m} year";
+    } //$diff->y
+    elseif ( $diff->m ) {
+        return "{$diff->m},{$diff->d} month";
+    } //$diff->m
+    else {
+        return "{$diff->d} days";
+    }
+}
+function sqltime( $timestamp = FALSE ) {
+    return ( $timestamp !== FALSE ) ? date( 'Y-m-d H:i:00', $timestamp ) : date( 'Y-m-d H:i:00' );
+}
+
+//---Generate randome string
+function Rstring( $length ) {
+    return substr( str_shuffle( "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ), 0, $length );
+}
+
+?>
