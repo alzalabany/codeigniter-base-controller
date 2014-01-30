@@ -31,7 +31,6 @@ public function __construct()
 	$this->_asset('jquery-2.0.3.min.js');
 }
 public function _set($var,$value){if(isset($this->$var))$this->$var = $value;return $this;}
-public function alerts(){return die(json_encode(alerts()));}
 public function logout(){$this->session->sess_destroy();redirect();}
 
 
