@@ -35,60 +35,9 @@ public function alerts(){return die(json_encode(alerts()));}
 public function logout(){$this->session->sess_destroy();redirect();}
 
 
-#AUTH
-protected function _failed_login(){
-	//$callers=debug_backtrace();
-	if($this->input->is_ajax_request())return die(json_encode(['error'=>'please login first']));
-	
-	alerts('warning','failed login');//.' '.$callers[1]['function']);
-	$this->load->view('base/landing');
-	die($this->output->get_output());
-}
-protected function _success_login(){
-	unset($_POST['login'],$_POST['password']);
-	#alerts('success','welcome '.$this->auth->user('login'));
-}
-protected function _validate(){
-	if( !$this->input->post() )return FALSE;
-	
-	#1. validation
-	$this->form_validation->set_rules('login', 'User Login', 'required|min_length[4]|max_length[12]|xss_clean');
-	$this->form_validation->set_rules('password', 'Password', 'required|min_length[4]|max_length[12]|xss_clean');
-	
-	#1.2 Failed validation
-	if( ! $this->form_validation->run() )return alerts('error',$this->form_validation->error_string(),false);
-	
-	#2. Login
-	return $this->auth->login(set_value('login'),set_value('password'));
-}
-public function auth($t='nurse'){
-	
-	$filter= ['alerts','logout'];//unprotected links
-	if(in_array($this->router->fetch_method(),$filter))return TRUE;
-	
-	if( !$this->auth->user('id') ){
-		if($this->input->post()){
-			if( !$this->_validate() )
-				return $this->_failed_login();
-			else 
-				return redirect($this->router->fetch_class().'/'.$this->router->fetch_method(),'refresh');
-		}else 
-			return $this->_failed_login();
-	
-	}
-	
-	
-	if( $this->auth->user('id') ) alerts('success','welcome back '.$this->auth->user('login'),true);
-	
-	$role=$this->auth->user('role');
-	
-	//ACCESS LEVELS CONDITIONS
-	if( !$role )return alerts('error',"this is a restricted area",$this->_failed_login());
-	if( $role == 'doctor' )return $this->_success_login();//doctors always login
-	if( $role != $t )return alerts('error',"this is a $t restricted area",$this->_failed_login());
-	
-}
-#END AUTH
+//AUTH
+///I like to use auth check and login and logout in my basecontroller; yet i removed it for this repo
+//END AUTH
 
 ##TEMPLATE SETTERS
 function _title($txt){$this->title=$txt;return $this;}
