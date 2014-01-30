@@ -23,10 +23,13 @@ first you need to edit $body to point to your base template; default location is
 
     <body>
     
-    <?=@$sectionA?>
-    ....
-    <?=@$content?>
-    ...
+        <div class='sidebar'>
+            <?=@$sidebar?>
+        </div>
+    
+        ....
+        <?=@$content?>
+        ...
     
     <?=@$js?>
     
@@ -53,13 +56,19 @@ class Welcome extends MY_Controller {
   }
   
   public function index(){
+    $this->load->model('user');
+    $data = $this->user->get_profile();
     
-    $data = array();#.... ANY KIND OF DATA
+    $this->_outv('user/profile',$data)   //This will load views/table_views.php into $content variable
+         ->_out('<hr>');                // === >  $content .= '<hr>';
     
-    $this ->_outv('table_view',$data)   //This will load views/table_views.php into $content variable
-          ->out('WELCOME','sectionA');  //this will add html into sectionA   
+    $data = $this->user->get_friends_list();
+    $this->_outv('users/list',$data); // loading another view into $content
     
-    ///.... after u load what ever u want into each section of page u can simply run
+    $data = $this->user->online_friends();
+    $this->_outv('chat/online_chats',$data,'sidebar'); //will load views/chat/online_chats.php into $sidebar
+    
+    ///.... after u load what every part of the page that i want into each section of page u can simply run
     $this->_flush();
   }
 
@@ -69,7 +78,9 @@ class Welcome extends MY_Controller {
 
 
 ###Avaliable options ::
+this was to answer a stackoverflow question :p !; yet i use this concept in real projects and its working good for me;
 
+;CI rocks;
 
 
 ##NOTE
